@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff77aa, #ffb6c1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.card {
+  max-width: 420px;
+  width: 100%;
+  background: #1a1a1a;
+  color: white;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.5);
+  text-align: center;
+  position: relative;
+}
+h2 { color: #ff77aa; margin-top: 40px; }
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+input { background: #fff0f5; color: #000; }
+button { background: #ff77aa; color: white; font-weight: bold; cursor: pointer; }
+button:hover { background: #ff4d99; }
+.hidden { display: none; }
+.receipt {
+  background: #fff0f5;
+  color: #000;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-top: 12px;
+  text-align: left;
+  line-height: 1.5;
+}
+.msg { color: #ff77aa; min-height: 20px; }
+.logo {
+  font-family: 'Pacifico', cursive;
+  font-size: 48px;
+  background: linear-gradient(45deg, #ff77aa, #ffb6c1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.logo.small {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  margin: 0;
+}

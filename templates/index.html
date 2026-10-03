@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>M-Banking Zizy Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="card" id="landing">
+  <div class="logo">Zizy</div>
+  <button onclick="showLogin()">Login</button>
+</div>
+
+<div class="card hidden" id="loginForm">
+  <div class="logo">Zizy</div>
+  <input id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="doLogin()">Masuk</button>
+  <p id="loginMsg" class="msg"></p>
+</div>
+
+<div class="card hidden" id="menu">
+  <div class="logo small">Zizy</div>
+  <h2>Menu Utama 🧸</h2>
+  <button onclick="show('saldo')">Cek Saldo 💖</button>
+  <button onclick="show('tarik')">Tarik Tunai 💰</button>
+  <button onclick="show('transfer')">Transfer ✨</button>
+  <button onclick="doLogout()">Logout ❌</button>
+</div>
+
+<div class="card hidden" id="saldo">
+  <div class="logo small">Zizy</div>
+  <h2>Cek Saldo 💖</h2>
+  <input type="password" placeholder="PIN" id="pinSaldo">
+  <button onclick="cekSaldo()">Lihat Saldo</button>
+  <div id="saldoHasil"></div>
+  <button onclick="back()">Kembali</button>
+</div>
+
+<div class="card hidden" id="tarik">
+  <div class="logo small">Zizy</div>
+  <h2>Tarik Tunai 💰</h2>
+  <input placeholder="Jumlah" id="jumlahTarik" type="number">
+  <input type="password" placeholder="PIN" id="pinTarik">
+  <button onclick="tarikTunai()">Tarik</button>
+  <div id="tarikHasil"></div>
+  <button onclick="back()">Kembali</button>
+</div>
+
+<div class="card hidden" id="transfer">
+  <div class="logo small">Zizy</div>
+  <h2>Transfer ✨</h2>
+  <input placeholder="No Rekening Tujuan" id="rekTujuan">
+  <input placeholder="Kode Bank" id="kodeBank">
+  <input placeholder="Jumlah" id="jumlahTf" type="number">
+  <input type="password" placeholder="PIN" id="pinTf">
+  <button onclick="transfer()">Transfer</button>
+  <div id="tfHasil"></div>
+  <button onclick="back()">Kembali</button>
+</div>
+
+<script>
+const api = async (url, body) => {
+  const r = await fetch(url, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body || {})
+  });
+  return r.json();
+};
+
+const showLogin = () => show('loginForm');
+const show = id => {
+  ['landing','loginForm','menu','saldo','tarik','transfer']
+    .forEach(x => document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+};
+const back = () => show('menu');
+
+async function doLogin() {
+  const u = username.value, p = password.value;
+  const res = await api('/api/login', {username: u, password: p});
+  if (res.ok) {
+    loginMsg.innerText = '';
+    show('menu');
+  } else {
+    loginMsg.innerText = res.msg;
+  }
+}
+
+async function doLogout() {
+  await api('/api/logout');
+  show('landing');
+}
+
+async function cekSaldo() {
+  const res = await api('/api/saldo', {pin: pinSaldo.value});
+  saldoHasil.innerHTML = res.ok
+    ? `<div class="receipt">Saldo: Rp${res.saldo.toLocaleString('id-ID')}</div>`
+    : `<div class="receipt">${res.msg}</div>`;
+}
+
+async function tarikTunai() {
+  const res = await api('/api/tarik', {
+    jumlah: jumlahTarik.value, pin: pinTarik.value
+  });
+  tarikHasil.innerHTML = res.ok
+    ? `<div class="receipt"><b>Tarik Tunai Berhasil</b><br>
+       Jumlah: Rp${res.jumlah.toLocaleString('id-ID')}<br>
+       Sisa Saldo: Rp${res.saldo.toLocaleString('id-ID')}<br>
+       Waktu: ${new Date().toLocaleString('id-ID')}</div>`
+    : `<div class="receipt">${res.msg}</div>`;
+}
+
+async function transfer() {
+  const res = await api('/api/transfer', {
+    rekening: rekTujuan.value,
+    kode_bank: kodeBank.value,
+    jumlah: jumlahTf.value,
+    pin: pinTf.value
+  });
+  tfHasil.innerHTML = res.ok
+    ? `<div class="receipt"><b>Transfer Berhasil</b><br>
+       Penerima: ${res.penerima}<br>
+       Jumlah: Rp${res.jumlah.toLocaleString('id-ID')}<br>
+       Admin: Rp${res.admin.toLocaleString('id-ID')}<br>
+       Total: Rp${res.total.toLocaleString('id-ID')}<br>
+       Sisa Saldo: Rp${res.saldo.toLocaleString('id-ID')}<br>
+       Waktu: ${new Date().toLocaleString('id-ID')}</div>`
+    : `<div class="receipt">${res.msg}</div>`;
+}
+</script>
+</body>
+</html>
